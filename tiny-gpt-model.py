@@ -36,3 +36,42 @@ print("Positional embedding:", position_embeddings)
 #combine token + position embedding
 x = token_embeddings + position_embeddings
 print("Combined embedding shape:", x.shape)
+
+
+#Add attention to the combined token and position embedding
+
+#Random weighted matrix for K V Q (The meaning of K V Q comes during training, right now it is random)
+key = nn.Linear(embedding_dimensions, embedding_dimensions, bias=False)
+
+value = nn.Linear(embedding_dimensions, embedding_dimensions, bias=False)
+
+query = nn.Linear(embedding_dimensions, embedding_dimensions, bias=False)
+
+#Transformations onto the combined token + position embeddings
+
+K = key(x)
+V = value(x)
+Q = query(x)
+
+print("K = ",K)
+print("Q = ",Q)
+print("V = ",V)
+
+
+#Calculate attention scores (semantic or contextual relation) - How much attention each token pays to other tokens in the sequence 
+scores = Q @ K.transpose(-2, -1)
+
+print("Raw attention score = ", scores)
+
+#Scale down the scores as the scores might be extra large. Scale down by root of embedding dimensions
+
+scores = scores / (embedding_dimensions ** 0.5)
+
+print("Scaled down score = ", scores)
+
+
+#Normalize the attention scores as probabilities so that for each token, the attention needed for other tokens adds to one and gives better view of attention
+
+weights = torch.softmax(scores, dim = -1)
+
+print("Normalized softmaxed score = ", weights)
