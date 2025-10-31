@@ -75,3 +75,8 @@ print("Scaled down score = ", scores)
 weights = torch.softmax(scores, dim = -1)
 
 print("Normalized softmaxed score = ", weights)
+
+
+attention_modified_tokens = weights @ V
+
+print("Attention modified tokens = ", attention_modified_tokens)
